@@ -1,1 +1,1 @@
-# Algoritmos de Ordenação em .NET Core
+# Algoritmos de OrdenaÃ§Ã£o em NET 8
