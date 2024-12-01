@@ -3,419 +3,235 @@ using System.Diagnostics;
 
 namespace AlgoritmoOrdenacaoDotNetCore
 {
-    class Program
+    static class Program
     {
-        static void Main(string[] args)
+        private static int MaxWidth
+        {
+            get => Console.BufferWidth - 1;
+        }
+
+        private static int MaxHeight
+        {
+            get => Console.BufferHeight - 1;
+        }
+
+        private static int[] _vetor = new[] { 12, 34, 890, 1000, 54, 112, 53, 450, 99, 652, 45, 96, 71, 69, 72, 23, 83, 63, 100 };
+        
+        static void Main()
         {
             InicializaAplicacao();
         }
 
-        private static void InicializaAplicacao()
+        static void InicializaAplicacao()
         {
             CriaJanela();
             CriaMenu();
-            InicializaPrompt();
+            InicializaPrompt();   
         }
-
+        
         private static void CriaJanela()
         {
+            Console.Title = "Algoritmos de ordenação";
             Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.CancelKeyPress += (_, _) => EncerrarExecucao();
+            
             Console.Clear();
-
             Console.SetCursorPosition(0, 0);
             Console.Write("╔");
-            Console.SetCursorPosition(79, 0);
+            Console.SetCursorPosition(MaxWidth, 0);
             Console.Write("╗");
-            Console.SetCursorPosition(0, 24);
+            Console.SetCursorPosition(0, MaxHeight);
             Console.Write("╚");
-            Console.SetCursorPosition(79, 24);
+            Console.SetCursorPosition(MaxWidth, MaxHeight);
             Console.Write("╝");
 
-            for (int i = 1; i < 79; i++)
+            for (int i = 1; i < MaxWidth; i++)
             {
                 Console.SetCursorPosition(i, 0);
                 Console.Write("═");
             }
 
-            for (int i = 1; i < 24; i++)
+            for (int i = 1; i < MaxHeight; i++)
             {
                 Console.SetCursorPosition(0, i);
                 Console.Write("║");
             }
 
-            for (int i = 1; i < 24; i++)
+            for (int i = 1; i < MaxHeight; i++)
             {
-                Console.SetCursorPosition(79, i);
+                Console.SetCursorPosition(MaxWidth, i);
                 Console.Write("║");
             }
 
-            for (int i = 1; i < 79; i++)
+            for (int i = 1; i < MaxWidth; i++)
             {
-                Console.SetCursorPosition(i, 24);
+                Console.SetCursorPosition(i, MaxHeight);
                 Console.Write("═");
             }
-
-            Console.SetCursorPosition(2, 1);
-            Console.Write("ALGORITMOS DE ORDENAÇÃO");
+            
+            ExibeTitulo("ALGORITMOS DE ORDENAÇÃO");
 
             Console.SetCursorPosition(0, 2);
             Console.Write("╠");
-            Console.SetCursorPosition(79, 2);
+            Console.SetCursorPosition(MaxWidth, 2);
             Console.Write("╣");
 
-            for (int i = 1; i < 79; i++)
+            for (int i = 1; i < MaxWidth; i++)
             {
                 Console.SetCursorPosition(i, 2);
                 Console.Write("═");
             }
 
-            Console.SetCursorPosition(30, 24);
-            Console.Write("╣ RAPHAEL CARDOSO - www.raphaelcardoso.com.br ╠");
+            ExibeCreditos("╣ C# BRASIL - csharpbrasil.com.br ╠");
+        }
+
+        private static void ExibeTitulo(string titulo)
+        {
+            Console.SetCursorPosition((MaxWidth / 2) - (titulo.Length / 2), 1);
+            Console.Write(titulo);
+        }
+
+        private static void ExibeCreditos(string creditos)
+        {
+            Console.SetCursorPosition(MaxWidth-creditos.Length-1, MaxHeight);
+            Console.Write(creditos);
+        }
+        
+        private static void ExibeSubTitulo(string subTitulo)
+        {
+            Console.SetCursorPosition(2, 3);
+            Console.Write(subTitulo);
+        }
+
+        private static void ExibeTempo(TimeSpan tempo)
+        {
+            Console.SetCursorPosition(2, 8);
+            Console.Write("TEMPO:");
+            Console.SetCursorPosition(15, 8);
+            Console.Write(tempo);
+        }
+
+        private static void ExibeVetor(int[] vetor)
+        {
+            Console.SetCursorPosition(2, 5);
+            Console.Write("VETOR:");
+            Console.SetCursorPosition(15, 5);
+            Console.Write(ConverteVetor(vetor));
+        }
+
+        private static void ExibeResultado(int[] vetor)
+        {
+            Console.SetCursorPosition(2, 6);
+            Console.Write("RESULTADO:");
+            Console.SetCursorPosition(15, 6);
+            Console.Write(ConverteVetor(vetor));
         }
 
         private static void CriaMenu()
         {
-            Console.SetCursorPosition(2, 3);
-            Console.Write(" MENU");
-            Console.SetCursorPosition(2, 5);
-            Console.Write("1)  Insertion Sort");
-            Console.SetCursorPosition(2, 6);
-            Console.Write("2)  Shell Sort");
-            Console.SetCursorPosition(2, 7);
-            Console.Write("3)  Selection Sort");
-            Console.SetCursorPosition(2, 8);
-            Console.Write("4)  Heap Sort");
-            Console.SetCursorPosition(2, 9);
-            Console.Write("5)  Bubble Sort");
-            Console.SetCursorPosition(2, 10);
-            Console.Write("6)  Cocktail Sort");
-            Console.SetCursorPosition(2, 11);
-            Console.Write("7)  Comb Sort");
-            Console.SetCursorPosition(2, 12);
-            Console.Write("8)  Gnome Sort");
-            Console.SetCursorPosition(2, 13);
-            Console.Write("9)  Odd-even Sort");
-            Console.SetCursorPosition(2, 14);
-            Console.Write("10) Quick Sort");
-            Console.SetCursorPosition(2, 15);
-            Console.Write("11) Sair");
+            ExibeSubTitulo("MENU");
+
+            var opcoes = new []
+            { 
+                "Insertion Sort",
+                "Shell Sort",
+                "Selection Sort",
+                "Heap Sort",
+                "Bubble Sort",
+                "Cocktail Sort",
+                "Comb Sort",
+                "Gnome Sort",
+                "Odd-even Sort",
+                "Quick Sort",
+                "Merge Sort"
+            };
+
+            for (int i = 0; i < opcoes.Length; i++)
+            {
+                Console.SetCursorPosition(2, i+6);
+                Console.Write("{0}) {1}", i+1, opcoes[i]);
+            }
+        }
+
+        private static void ExecutaAlgoritmoOrdenacao(string titulo, Func<int[], int[]> funcaoAlgoritmoOrdenacao)
+        {
+            CriaJanela();
+            ExibeSubTitulo(titulo);
+            ExibeVetor(_vetor);
+            
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            int[] novoVetor = funcaoAlgoritmoOrdenacao(_vetor);
+            stopWatch.Stop();
+            
+            ExibeResultado(novoVetor);
+            ExibeTempo(stopWatch.Elapsed);
+            
+            Console.SetCursorPosition(2, MaxHeight-1);
+            Console.Write("Pressione qualquer tecla para voltar ao menu...");
+            Console.ReadKey();
+            
+            InicializaAplicacao();
         }
 
         private static void InicializaPrompt()
         {
-            var stopWatch = new Stopwatch();
-
-            Console.SetCursorPosition(2, 23);
+            Console.SetCursorPosition(2, MaxHeight-1);
+            Console.Write("Ou pressione qualquer tecla para finalizar...");
+            
+            Console.SetCursorPosition(2, MaxHeight-2);
             Console.Write("Escolha uma opção: ");
-            string valor = Console.ReadLine();
-            int opcao;
-            int.TryParse(valor, out opcao);
-
+            
+            int.TryParse(Console.ReadLine(), out int opcao);
             switch (opcao)
             {
                 case 1: // Insertion Sort
-                    stopWatch.Start();
-                    OpcaoInsertionSort();
-                    stopWatch.Stop();
-
-                    Console.SetCursorPosition(2, 8);
-                    Console.Write("TEMPO:     " + stopWatch.Elapsed);
-
-                    Console.ReadKey();
-
+                    ExecutaAlgoritmoOrdenacao("INSERTION SORT", Ordenacoes.InsertionSort);
                     break;
                 case 2: // Shell Sort
-                    stopWatch.Start();
-                    OpcaoShellSort();
-                    stopWatch.Stop();
-
-                    Console.SetCursorPosition(2, 8);
-                    Console.Write("TEMPO:     " + stopWatch.Elapsed);
-
-                    Console.ReadKey();
+                    ExecutaAlgoritmoOrdenacao("SHELL SORT", Ordenacoes.ShellSort);
                     break;
                 case 3: // Selection Sort
-                    stopWatch.Start();
-                    OpcaoSelectionSort();
-                    stopWatch.Stop();
-
-                    Console.SetCursorPosition(2, 8);
-                    Console.Write("TEMPO:     " + stopWatch.Elapsed);
-
-                    Console.ReadKey();
+                    ExecutaAlgoritmoOrdenacao("SELECTION SORT", Ordenacoes.SelectionSort);
                     break;
                 case 4: // Heap Sort
-                    stopWatch.Start();
-                    OpcaoHeapSort();
-                    stopWatch.Stop();
-
-                    Console.SetCursorPosition(2, 8);
-                    Console.Write("TEMPO:     " + stopWatch.Elapsed);
-
-                    Console.ReadKey();
+                    ExecutaAlgoritmoOrdenacao("HEAP SORT", Ordenacoes.HeapSort);
                     break;
                 case 5: // Bubble Sort
-                    stopWatch.Start();
-                    OpcaoBubbleSort();
-                    stopWatch.Stop();
-
-                    Console.SetCursorPosition(2, 8);
-                    Console.Write("TEMPO:     " + stopWatch.Elapsed);
-
-                    Console.ReadKey();
+                    ExecutaAlgoritmoOrdenacao("BUBBLE SORT", Ordenacoes.BubbleSort);
                     break;
                 case 6: // Cocktail Sort
-                    stopWatch.Start();
-                    OpcaoCocktailSort();
-                    stopWatch.Stop();
-
-                    Console.SetCursorPosition(2, 8);
-                    Console.Write("TEMPO:     " + stopWatch.Elapsed);
-
-                    Console.ReadKey();
+                    ExecutaAlgoritmoOrdenacao("COCKTAIL SORT", Ordenacoes.CocktailSort);
                     break;
                 case 7: // Comb Sort
-                    stopWatch.Start();
-                    OpcaoCombSort();
-                    stopWatch.Stop();
-
-                    Console.SetCursorPosition(2, 8);
-                    Console.Write("TEMPO:     " + stopWatch.Elapsed);
-
-                    Console.ReadKey();
+                    ExecutaAlgoritmoOrdenacao("COMB SORT", Ordenacoes.CombSort);
                     break;
                 case 8: // Gnome Sort
-                    stopWatch.Start();
-                    OpcaoGnomeSort();
-                    stopWatch.Stop();
-
-                    Console.SetCursorPosition(2, 8);
-                    Console.Write("TEMPO:     " + stopWatch.Elapsed);
-
-                    Console.ReadKey();
+                    ExecutaAlgoritmoOrdenacao("GNOME SORT", Ordenacoes.GnomeSort);
                     break;
                 case 9: // Odd-Even Sort
-                    stopWatch.Start();
-                    OpcaoOddEvenSort();
-                    stopWatch.Stop();
-
-                    Console.SetCursorPosition(2, 8);
-                    Console.Write("TEMPO:     " + stopWatch.Elapsed);
-
-                    Console.ReadKey();
+                    ExecutaAlgoritmoOrdenacao("ODD-EVEN SORT", Ordenacoes.OddEvenSort);
                     break;
                 case 10: // Quick Sort
-                    stopWatch.Start();
-                    OpcaoQuickSort();
-                    stopWatch.Stop();
-
-                    Console.SetCursorPosition(2, 8);
-                    Console.Write("TEMPO:     " + stopWatch.Elapsed);
-
-                    Console.ReadKey();
+                    ExecutaAlgoritmoOrdenacao("QUICK SORT", Ordenacoes.QuickSort);
                     break;
-                case 11: // SAIR
-                    Environment.Exit(0);
+                case 11: // Merge Sort
+                    ExecutaAlgoritmoOrdenacao("MERGE SORT", Ordenacoes.MergeSort);
                     break;
-                default: // VOLTA PARA O MENU
-                    InicializaAplicacao();
+                default: // SAIR
+                    EncerrarExecucao();
                     break;
             }
-
-            InicializaAplicacao();
         }
 
-        private static string ConverteVetor(int[] vetor)
+        private static void EncerrarExecucao()
         {
-            string virgula = string.Empty;
-            string valores = string.Empty;
-            for (int i = 0; i < vetor.Length; i++)
-            {
-                valores += virgula + vetor[i];
-                virgula = ",";
-            }
-
-            return valores;
+            Console.ResetColor();
+            Console.Clear();
+            Environment.Exit(0);
         }
 
-        private static void OpcaoInsertionSort()
-        {
-            CriaJanela();
-
-            Console.SetCursorPosition(2, 3);
-            Console.Write(" INSERTION SORT");
-
-            int[] vetor = new int[] { 12, 34, 98, 890, 1000, 3, 8, 54, 87, 100, 112, 133, 5, 1, 450 };
-
-            Console.SetCursorPosition(2, 5);
-            Console.Write("VETOR:     " + ConverteVetor(vetor));
-
-            int[] novoVetor = Ordenacoes.insertionSort(vetor);
-
-            Console.SetCursorPosition(2, 6);
-            Console.Write("RESULTADO: " + ConverteVetor(novoVetor));
-        }
-
-        private static void OpcaoShellSort()
-        {
-            CriaJanela();
-
-            Console.SetCursorPosition(2, 3);
-            Console.Write(" SHELL SORT");
-
-            int[] vetor = new int[] { 12, 34, 98, 890, 1000, 3, 8, 54, 87, 100, 112, 133, 5, 1, 450 };
-
-            Console.SetCursorPosition(2, 5);
-            Console.Write("VETOR:     " + ConverteVetor(vetor));
-
-            int[] novoVetor = Ordenacoes.shellSort(vetor);
-
-            Console.SetCursorPosition(2, 6);
-            Console.Write("RESULTADO: " + ConverteVetor(novoVetor));
-        }
-
-        private static void OpcaoSelectionSort()
-        {
-            CriaJanela();
-
-            Console.SetCursorPosition(2, 3);
-            Console.Write(" SELECTION SORT");
-
-            int[] vetor = new int[] { 12, 34, 98, 890, 1000, 3, 8, 54, 87, 100, 112, 133, 5, 1, 450 };
-
-            Console.SetCursorPosition(2, 5);
-            Console.Write("VETOR:     " + ConverteVetor(vetor));
-
-            int[] novoVetor = Ordenacoes.selectionSort(vetor);
-
-            Console.SetCursorPosition(2, 6);
-            Console.Write("RESULTADO: " + ConverteVetor(novoVetor));
-        }
-
-        private static void OpcaoHeapSort()
-        {
-            CriaJanela();
-
-            Console.SetCursorPosition(2, 3);
-            Console.Write(" HEAP SORT");
-
-            int[] vetor = new int[] { 12, 34, 98, 890, 1000, 3, 8, 54, 87, 100, 112, 133, 5, 1, 450 };
-
-            Console.SetCursorPosition(2, 5);
-            Console.Write("VETOR:     " + ConverteVetor(vetor));
-
-            int[] novoVetor = Ordenacoes.heapSort(vetor);
-
-            Console.SetCursorPosition(2, 6);
-            Console.Write("RESULTADO: " + ConverteVetor(novoVetor));
-        }
-
-        private static void OpcaoBubbleSort()
-        {
-            CriaJanela();
-
-            Console.SetCursorPosition(2, 3);
-            Console.Write(" BUBBLE SORT");
-
-            int[] vetor = new int[] { 12, 34, 98, 890, 1000, 3, 8, 54, 87, 100, 112, 133, 5, 1, 450 };
-
-            Console.SetCursorPosition(2, 5);
-            Console.Write("VETOR:     " + ConverteVetor(vetor));
-
-            int[] novoVetor = Ordenacoes.bubbleSort(vetor);
-
-            Console.SetCursorPosition(2, 6);
-            Console.Write("RESULTADO: " + ConverteVetor(novoVetor));
-        }
-
-        private static void OpcaoCocktailSort()
-        {
-            CriaJanela();
-
-            Console.SetCursorPosition(2, 3);
-            Console.Write(" COCKTAIL SORT");
-
-            int[] vetor = new int[] { 12, 34, 98, 890, 1000, 3, 8, 54, 87, 100, 112, 133, 5, 1, 450 };
-
-            Console.SetCursorPosition(2, 5);
-            Console.Write("VETOR:     " + ConverteVetor(vetor));
-
-            int[] novoVetor = Ordenacoes.cocktailSort(vetor);
-
-            Console.SetCursorPosition(2, 6);
-            Console.Write("RESULTADO: " + ConverteVetor(novoVetor));
-        }
-
-        private static void OpcaoCombSort()
-        {
-            CriaJanela();
-
-            Console.SetCursorPosition(2, 3);
-            Console.Write(" COMB SORT");
-
-            int[] vetor = new int[] { 12, 34, 98, 890, 1000, 3, 8, 54, 87, 100, 112, 133, 5, 1, 450 };
-
-            Console.SetCursorPosition(2, 5);
-            Console.Write("VETOR:     " + ConverteVetor(vetor));
-
-            int[] novoVetor = Ordenacoes.combSort(vetor);
-
-            Console.SetCursorPosition(2, 6);
-            Console.Write("RESULTADO: " + ConverteVetor(novoVetor));
-        }
-
-        private static void OpcaoGnomeSort()
-        {
-            CriaJanela();
-
-            Console.SetCursorPosition(2, 3);
-            Console.Write(" GNOME SORT");
-
-            int[] vetor = new int[] { 12, 34, 98, 890, 1000, 3, 8, 54, 87, 100, 112, 133, 5, 1, 450 };
-
-            Console.SetCursorPosition(2, 5);
-            Console.Write("VETOR:     " + ConverteVetor(vetor));
-
-            int[] novoVetor = Ordenacoes.gnomeSort(vetor);
-
-            Console.SetCursorPosition(2, 6);
-            Console.Write("RESULTADO: " + ConverteVetor(novoVetor));
-        }
-
-        private static void OpcaoOddEvenSort()
-        {
-            CriaJanela();
-
-            Console.SetCursorPosition(2, 3);
-            Console.Write(" ODD-EVEN SORT");
-
-            int[] vetor = new int[] { 12, 34, 98, 890, 1000, 3, 8, 54, 87, 100, 112, 133, 5, 1, 450 };
-
-            Console.SetCursorPosition(2, 5);
-            Console.Write("VETOR:     " + ConverteVetor(vetor));
-
-            int[] novoVetor = Ordenacoes.oddEvenSort(vetor);
-
-            Console.SetCursorPosition(2, 6);
-            Console.Write("RESULTADO: " + ConverteVetor(novoVetor));
-        }
-
-        private static void OpcaoQuickSort()
-        {
-            CriaJanela();
-
-            Console.SetCursorPosition(2, 3);
-            Console.Write(" QUICK SORT");
-
-            int[] vetor = new int[] { 12, 34, 98, 890, 1000, 3, 8, 54, 87, 100, 112, 133, 5, 1, 450 };
-
-            Console.SetCursorPosition(2, 5);
-            Console.Write("VETOR:     " + ConverteVetor(vetor));
-
-            int[] novoVetor = Ordenacoes.quickSort(vetor);
-
-            Console.SetCursorPosition(2, 6);
-            Console.Write("RESULTADO: " + ConverteVetor(novoVetor));
-        }
+        private static string ConverteVetor(int[] vetor) => string.Join(',', vetor);
     }
 }
